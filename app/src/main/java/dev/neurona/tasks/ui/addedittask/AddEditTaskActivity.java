@@ -1,14 +1,14 @@
 package dev.neurona.tasks.ui.addedittask;
 
+import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
-
+import android.widget.ImageButton;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
-
 import com.google.android.material.textfield.TextInputEditText;
-
+import java.util.Calendar;
 import dev.neurona.tasks.R;
 import dev.neurona.tasks.data.model.Task;
 import dev.neurona.tasks.utils.Injection;
@@ -31,6 +31,7 @@ public class AddEditTaskActivity extends AppCompatActivity {
         editTextDescription = findViewById(R.id.edit_text_description);
         editTextDueDate = findViewById(R.id.edit_text_due_date);
         Button buttonSaveTask = findViewById(R.id.button_save_task);
+        ImageButton buttonDueDate = findViewById(R.id.button_due_date);
 
         viewModel = new ViewModelProvider(this, Injection.provideAddEditTaskViewModelFactory(this)).get(AddEditTaskViewModel.class);
 
@@ -43,6 +44,9 @@ public class AddEditTaskActivity extends AppCompatActivity {
             editTextDueDate.setText(task.getDueDate());
         }
 
+
+        editTextDueDate.setOnClickListener(v -> showDatePickerDialog());
+        buttonDueDate.setOnClickListener(v -> showDatePickerDialog());
         buttonSaveTask.setOnClickListener(v -> saveTask(task));
     }
 
@@ -67,5 +71,20 @@ public class AddEditTaskActivity extends AppCompatActivity {
     public boolean onSupportNavigateUp() {
         onBackPressed();
         return true;
+    }
+
+    private void showDatePickerDialog() {
+        Calendar calendar = Calendar.getInstance();
+        int year = calendar.get(Calendar.YEAR);
+        int month = calendar.get(Calendar.MONTH);
+        int day = calendar.get(Calendar.DAY_OF_MONTH);
+
+        DatePickerDialog datePickerDialog = new DatePickerDialog(this, (view, selectedYear, selectedMonth, selectedDayOfMonth) -> {
+            selectedMonth++; // Months are 0-indexed in the DatePicker
+            String date = String.format("%04d-%02d-%02d", selectedYear, selectedMonth, selectedDayOfMonth);
+            editTextDueDate.setText(date);
+        }, year, month, day);
+
+        datePickerDialog.show();
     }
 }
