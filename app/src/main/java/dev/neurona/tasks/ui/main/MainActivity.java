@@ -66,6 +66,13 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnIte
         showDeleteConfirmationDialog(position);
     }
 
+    @Override
+    public void onCheckedChanged(int position, boolean isChecked) {
+        Task task = taskList.get(position);
+        task.setCompleted(isChecked);
+        viewModel.updateTask(task);
+    }
+
     private void showDeleteConfirmationDialog(int position) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage(R.string.delete_dialog_msg)

@@ -9,6 +9,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 import com.google.android.material.textfield.TextInputEditText;
 import java.util.Calendar;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import dev.neurona.tasks.R;
 import dev.neurona.tasks.data.model.Task;
 import dev.neurona.tasks.utils.Injection;
@@ -41,9 +45,12 @@ public class AddEditTaskActivity extends AppCompatActivity {
         if (task != null) {
             editTextTitle.setText(task.getTitle());
             editTextDescription.setText(task.getDescription());
-            editTextDueDate.setText(task.getDueDate());
-        }
 
+            // Format the date as a string
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            String dueDateString = sdf.format(task.getDueDate());
+            editTextDueDate.setText(dueDateString);
+        }
 
         editTextDueDate.setOnClickListener(v -> showDatePickerDialog());
         buttonDueDate.setOnClickListener(v -> showDatePickerDialog());
@@ -53,7 +60,15 @@ public class AddEditTaskActivity extends AppCompatActivity {
     private void saveTask(Task task) {
         String title = editTextTitle.getText().toString();
         String description = editTextDescription.getText().toString();
-        String dueDate = editTextDueDate.getText().toString();
+        String dueDateString = editTextDueDate.getText().toString();
+
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        Date dueDate = null;
+        try {
+            dueDate = sdf.parse(dueDateString);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
 
         if (task == null) {
             viewModel.insertTask(new Task(title, description, dueDate));

@@ -21,6 +21,14 @@ public class MainViewModel extends ViewModel {
         return allTasks;
     }
 
+    public void insertTask(Task task) {
+        taskRepository.insertTask(task);
+    }
+
+    public void updateTask(Task task) {
+        taskRepository.updateTask(task);
+    }
+
     public void deleteTask(Task task) {
         this.taskRepository.deleteTask(task);
     }

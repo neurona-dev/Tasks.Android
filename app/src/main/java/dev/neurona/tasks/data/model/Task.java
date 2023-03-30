@@ -4,8 +4,8 @@ import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
-
 import java.io.Serializable;
+import java.util.Date;
 
 @Entity(tableName = "task_table")
 public class Task implements Serializable {
@@ -19,21 +19,26 @@ public class Task implements Serializable {
     private String description;
 
     @ColumnInfo(name = "due_date")
-    private String dueDate;
+    private Date dueDate;
 
-    public Task(int id, String title, String description, String dueDate) {
+    @ColumnInfo(name = "completed")
+    private boolean completed;
+
+    public Task(int id, String title, String description, Date dueDate, boolean completed) {
         this.id = id;
         this.title = title;
         this.description = description;
         this.dueDate = dueDate;
+        this.completed = completed;
     }
 
     // New constructor without id parameter
     @Ignore // Add this annotation
-    public Task(String title, String description, String dueDate) {
+    public Task(String title, String description, Date dueDate) {
         this.title = title;
         this.description = description;
         this.dueDate = dueDate;
+        this.completed = false;
     }
 
 
@@ -63,11 +68,19 @@ public class Task implements Serializable {
         this.description = description;
     }
 
-    public String getDueDate() {
+    public Date getDueDate() {
         return dueDate;
     }
 
-    public void setDueDate(String dueDate) {
+    public void setDueDate(Date dueDate) {
         this.dueDate = dueDate;
+    }
+
+    public boolean isCompleted() {
+        return completed;
+    }
+
+    public void setCompleted(boolean completed) {
+        this.completed = completed;
     }
 }
