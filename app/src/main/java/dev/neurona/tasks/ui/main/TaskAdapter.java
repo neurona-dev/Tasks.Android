@@ -6,6 +6,7 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.graphics.Paint;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -44,11 +45,14 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         String dueDateString = sdf.format(task.getDueDate());
         holder.textViewDueDate.setText(dueDateString);
 
+        // Set the checkbox status and apply strikethrough effect
         holder.checkBoxCompleted.setChecked(task.isCompleted());
+        applyStrikethrough(holder, task.isCompleted());
+
         holder.checkBoxCompleted.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            int currentPosition = holder.getAdapterPosition();
-            if (onItemClickListener != null && currentPosition != RecyclerView.NO_POSITION) {
-                onItemClickListener.onCheckedChanged(currentPosition, isChecked);
+            applyStrikethrough(holder, isChecked);
+            if (onItemClickListener != null && position != RecyclerView.NO_POSITION) {
+                onItemClickListener.onCheckedChanged(position, isChecked);
             }
         });
 
@@ -58,6 +62,18 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
                 onItemClickListener.onDeleteClick(currentPosition);
             }
         });
+    }
+
+    private void applyStrikethrough(TaskViewHolder holder, boolean isChecked) {
+        if (isChecked) {
+            holder.textViewTitle.setPaintFlags(holder.textViewTitle.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+            holder.textViewDescription.setPaintFlags(holder.textViewDescription.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+            holder.textViewDueDate.setPaintFlags(holder.textViewDueDate.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+        } else {
+            holder.textViewTitle.setPaintFlags(holder.textViewTitle.getPaintFlags() & ~Paint.STRIKE_THRU_TEXT_FLAG);
+            holder.textViewDescription.setPaintFlags(holder.textViewDescription.getPaintFlags() & ~Paint.STRIKE_THRU_TEXT_FLAG);
+            holder.textViewDueDate.setPaintFlags(holder.textViewDueDate.getPaintFlags() & ~Paint.STRIKE_THRU_TEXT_FLAG);
+        }
     }
 
     @Override
