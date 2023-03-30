@@ -3,12 +3,14 @@ package dev.neurona.tasks.ui.main;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 import dev.neurona.tasks.R;
@@ -36,7 +38,20 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         Task task = taskList.get(position);
         holder.textViewTitle.setText(task.getTitle());
         holder.textViewDescription.setText(task.getDescription());
-        holder.textViewDueDate.setText(task.getDueDate());
+
+        // Format the date as a string
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        String dueDateString = sdf.format(task.getDueDate());
+        holder.textViewDueDate.setText(dueDateString);
+
+        holder.checkBoxCompleted.setChecked(task.isCompleted());
+        holder.checkBoxCompleted.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            int currentPosition = holder.getAdapterPosition();
+            if (onItemClickListener != null && currentPosition != RecyclerView.NO_POSITION) {
+                onItemClickListener.onCheckedChanged(currentPosition, isChecked);
+            }
+        });
+
         holder.buttonDelete.setOnClickListener(v -> {
             int currentPosition = holder.getAdapterPosition();
             if (onItemClickListener != null && currentPosition != RecyclerView.NO_POSITION) {
@@ -59,6 +74,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         TextView textViewTitle;
         TextView textViewDescription;
         TextView textViewDueDate;
+        CheckBox checkBoxCompleted;
         ImageButton buttonDelete;
 
         TaskViewHolder(@NonNull View itemView, OnItemClickListener onItemClickListener) {
@@ -66,6 +82,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
             textViewTitle = itemView.findViewById(R.id.text_view_title);
             textViewDescription = itemView.findViewById(R.id.text_view_description);
             textViewDueDate = itemView.findViewById(R.id.text_view_due_date);
+            checkBoxCompleted = itemView.findViewById(R.id.check_box_completed);
             buttonDelete = itemView.findViewById(R.id.button_delete);
 
             itemView.setOnClickListener(v -> {
@@ -80,5 +97,6 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
     public interface OnItemClickListener {
         void onItemClick(int position);
         void onDeleteClick(int position);
+        void onCheckedChanged(int position, boolean isChecked);
     }
 }
